@@ -9,6 +9,9 @@ defaults:
   - paths: default.yaml
   - extras: default.yaml
   - hydra: default.yaml
+  - callbacks: default.yaml
+  - experiment: null
+
 
 task_name: "eval"
 

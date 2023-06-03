@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 import hydra
 import pyrootutils
-from lightning import LightningDataModule, LightningModule, Trainer
+from lightning import LightningDataModule, LightningModule, Trainer, Callback
 from lightning.pytorch.loggers import Logger
 from omegaconf import DictConfig
 
@@ -51,6 +51,9 @@ def evaluate(cfg: DictConfig) -> Tuple[dict, dict]:
     log.info(f"Instantiating model <{cfg.model._target_}>")
     model: LightningModule = hydra.utils.instantiate(cfg.model)
 
+    log.info("Instantiating callbacks...")
+    callbacks: List[Callback] = utils.instantiate_callbacks(cfg.get("callbacks"))
+
     log.info("Instantiating loggers...")
     logger: List[Logger] = utils.instantiate_loggers(cfg.get("logger"))
 
@@ -61,8 +64,9 @@ def evaluate(cfg: DictConfig) -> Tuple[dict, dict]:
         "cfg": cfg,
         "datamodule": datamodule,
         "model": model,
+        "callbacks": callbacks,
         "logger": logger,
-        "trainer": trainer,
+        "trainer": trainer
     }
 
     if logger:
